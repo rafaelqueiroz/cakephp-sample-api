@@ -1,3 +1,5 @@
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/rafaelqueiroz/cakephp-sample-api/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/rafaelqueiroz/cakephp-sample-api/?branch=master)
+
 ### CakePHP Sample API
 
 This is an example application with CakePHP.
