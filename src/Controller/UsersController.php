@@ -1,12 +1,24 @@
 <?php
 namespace Recipe\Controller;
-use Cake\Http\Response;
+use Cake\Event\Event;
+use Cake\Network\Exception\UnauthorizedException;
 
 /**
  * @author Rafael Queiroz <rafaelfqf@gmail.com>
  */
 class UsersController extends AppController
 {
+
+    /**
+     * @param \Cake\Event\Event $event The beforeRender event.
+     * @return \Cake\Network\Response|null|void
+     */
+    public function beforeRender(Event $event)
+    {
+        $this->RequestHandler->respondAs('json');
+        $this->RequestHandler->renderAs($this, 'json');
+        $this->set('_serialize', true);
+    }
 
     /**
      * Access token method
@@ -17,12 +29,12 @@ class UsersController extends AppController
     {
         $this->request->allowMethod('post');
         $user = $this->Auth->identify();
-        if ($user) {
-            $token = $user->token();
+        if (!$user) {
+            throw new UnauthorizedException("Invalid credentials");
         }
-        
-        $this->set(compact('token'));
-        $this->set('_serialize', ['token']);
+
+        $user = $this->Users->newEntity($user);
+        $this->set($user->token());
     }
 
     /**
@@ -34,10 +46,9 @@ class UsersController extends AppController
     {
         $this->request->allowMethod('post');
         $user = $this->Users->newEntity($this->request->getData());
-        $this->Users->save($user);
+        $this->Users->register($user);
 
         $this->set(compact('user'));
-        $this->set('_serialize', ['user']);
     }
 
 }

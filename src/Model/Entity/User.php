@@ -3,6 +3,8 @@ namespace Recipe\Model\Entity;
 
 use Cake\Auth\DefaultPasswordHasher;
 use Cake\ORM\Entity;
+use Cake\Utility\Security;
+use Firebase\JWT\JWT;
 
 /**
  * @author Rafael Queiroz <rafaelfqf@gmail.com>
@@ -30,9 +32,18 @@ class User extends Entity
     /**
      * @return array
      */
-    protected function generateToken() 
+    public function token()
     {
-        return [];
+        $expires_in = time() + 604800;
+
+        return [
+            'access_token' => JWT::encode([
+                'sub' => $this->id,
+                'exp' => $expires_in
+            ], Security::salt()),
+            'token_type'  => 'Bearer',
+            'expires_in' => $expires_in
+        ];
     }
 
 }
